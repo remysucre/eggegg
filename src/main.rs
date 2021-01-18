@@ -57,14 +57,13 @@ where L: Language, A: Analysis<L>
         let mut g_changed = false;
         for class in g1.classes() {
             for node in &class.nodes {
-                for mut n_new in flatmap_children(&g, node, |id| {e1_e.get(&id).unwrap_or(&empty_set).iter().copied()}) {
-                    if let Some(c2) = g2.lookup(n_new.clone().map_children(|id| e_e2[&g.find(id)])) {
+                for mut n_new in flatmap_children(node, |id| {e1_e.get(&id).unwrap_or(&empty_set).iter().copied()}) {
+                    if let Some(c2) = g2.lookup(n_new.clone().map_children(|id| e_e2[&id])) {
                         g.rebuild();
                         let c_new = g.lookup(&mut n_new).unwrap_or_else(||{
                             g_changed = true;
                             g.add(n_new.clone())
                         });
-                        let c_new = g.find(c_new);
                         g.rebuild();
                         e_e2.insert(c_new, c2);
                         e1_e.entry(class.id)
@@ -89,8 +88,8 @@ where L: Language, A: Analysis<L>
 // compute the set of new nodes op(c1',...,cn') from op(c1,...,cn)
 // let op(c1,...,cn) = node;
 // vec![op(c1',...,cn') where c1' in f(c1),...,cn' in f(cn)]
-fn flatmap_children<A, L, F, I>(g: &EGraph<L, A>, node: &L, f: F)-> Vec<L>
-where L : Language, A: Analysis<L>, I: Clone + Iterator<Item=Id>, F: Fn(Id) -> I
+fn flatmap_children<L, F, I>(node: &L, f: F)-> Vec<L>
+where L : Language, I: Clone + Iterator<Item=Id>, F: Fn(Id) -> I
 {
     if node.children().is_empty() {
         vec![node.clone()]
@@ -102,7 +101,7 @@ where L : Language, A: Analysis<L>, I: Clone + Iterator<Item=Id>, F: Fn(Id) -> I
         childrens.map(|children| {
             let mut new_node = node.clone();
             for i in 0..children.len() {
-                new_node.children_mut()[i] = g.find(children[i]);
+                new_node.children_mut()[i] = children[i];
             }
             new_node
         }).collect()
