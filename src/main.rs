@@ -78,12 +78,10 @@ where
                     e1_e.get(&id).unwrap_or(&empty_set).iter().copied()
                 }) {
                     if let Some(c2) = g2.lookup(n_new.clone().map_children(|id| e_e2[&id])) {
-                        g.rebuild();
                         let c_new = g.lookup(&mut n_new).unwrap_or_else(|| {
                             g_changed = true;
                             g.add(n_new.clone())
                         });
-                        g.rebuild();
                         e_e2.insert(c_new, c2);
                         e1_e.entry(class.id).or_insert(HashSet::new()).insert(c_new);
                         for c in e1_e[&class.id].iter() {
