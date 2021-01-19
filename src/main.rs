@@ -67,7 +67,7 @@ where
     A: Analysis<L>,
 {
     let mut g = EGraph::new(analysis);
-    let mut e_1: HashSet<Id> = HashSet::new();
+    let mut e1: HashSet<Id> = HashSet::new();
     let mut e1_e: HashMap<Id, HashSet<Id>> = HashMap::new();
     let mut e_e2: HashMap<Id, Id> = HashMap::new();
     let empty_set = HashSet::new();
@@ -75,14 +75,14 @@ where
         let mut g_changed = false;
         for class in g1.classes() {
             for node in &class.nodes {
-                if node.children().iter().all(|c| e_1.contains(c)) {
+                if node.children().iter().all(|c| e1.contains(c)) {
                     for mut n_new in flatmap_children(node, |id| {
                         e1_e.get(&id).unwrap_or(&empty_set).iter().copied()
                     }) {
                         if let Some(c2) = g2.lookup(n_new.clone().map_children(|id| e_e2[&id])) {
                             let c_new = g.lookup(&mut n_new).unwrap_or_else(|| {
                                 g_changed = true;
-                                e_1.insert(class.id);
+                                e1.insert(class.id);
                                 g.add(n_new.clone())
                             });
                             e_e2.insert(c_new, c2);
