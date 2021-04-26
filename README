@@ -1,0 +1,1 @@
+Install graphviz (for drawing dot files), then `cargo run`.

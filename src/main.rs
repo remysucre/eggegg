@@ -4,7 +4,7 @@ use std::collections::{HashMap, HashSet};
 use itertools::Itertools;
 
 define_language! {
-    pub enum Datalog {
+    pub enum Arith {
         Num(i32), // 0 is empty set
         "+" = Add([Id; 2]),
         "*" = Mul([Id; 2]),
@@ -12,7 +12,7 @@ define_language! {
     }
 }
 
-fn rules() -> Vec<Rewrite<Datalog, ()>> {
+fn rules() -> Vec<Rewrite<Arith, ()>> {
     vec![
         rw!("add-0-l"; "(+ ?x 0)" => "?x"),
         rw!("add-0-lr"; "(+ ?y ?x)" => "(+ ?x ?y)"),
